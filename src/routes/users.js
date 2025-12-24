@@ -4,7 +4,10 @@ const userController = require('../controllers/userController');
 const verifyAuthToken = require("../middlewares/verifyAuthToken");
 
 //api/users
-router.get('/', verifyAuthToken, userController.getAllUsers);
+router.get('/', userController.getAllUsers);
+
+//api/users/me
+router.get('/me', verifyAuthToken, userController.getLoginUserInfo);
 
 //api/users/exists
 router.get('/exists', userController.findUserByEmail);

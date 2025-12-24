@@ -21,6 +21,31 @@ const getAllUsers = async (req, res, next) => {
 };
 
 /**
+ * 로그인 사용자 정보 조회
+ */
+const getLoginUserInfo = async (req, res, next) => {
+  try {
+    const user = req.firebaseUser;
+    const uid = user.uid;
+
+    const [users] = await pool.execute('SELECT * FROM users WHEN uid = ?', [uid])
+    if (users.length === 0) {
+      throw new ApiError(ERROR_CODES.USER_NOT_FOUND, "login user info is not found");
+    }
+
+    return res.status(200).json(
+      {
+        success: true,
+        data: users[0]
+      }
+    );
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
  * 이메일 중복 확인
  */
 const findUserByEmail = async (req, res, next) => {
@@ -61,7 +86,7 @@ const findUserByEmail = async (req, res, next) => {
 /**
  * 사용자 정보 동기화
  */
-const syncUser = async (req, res) => {
+const syncUser = async (req, res, next) => {
   try {
     const user = req.firebaseUser;
     const uid = user.uid;
@@ -91,34 +116,4 @@ const syncUser = async (req, res) => {
   }
 }
 
-/**
- * 아이디로 사용자 검색 
- */
-// const findUserById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const [users] = await pool.execute('SELECT * FROM users WHERE id = ?', [id]);
-
-//     if (users.length === 0) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'User not found'
-//       });
-//     }
-
-//     res.json({
-//       success: true,
-//       data: users[0]
-//     });
-//   } catch (error) {
-//     console.error('Error fetching user:', error);
-//     res.status(500).json({
-//       success: false,
-//       message: 'Internal Server Error',
-//       error: error.message
-//     });
-//   }
-// };
-
-
-module.exports = { getAllUsers, findUserByEmail, syncUser };
+module.exports = { getAllUsers, getLoginUserInfo, findUserByEmail, syncUser };
