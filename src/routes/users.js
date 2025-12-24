@@ -6,9 +6,6 @@ const verifyAuthToken = require("../middlewares/verifyAuthToken");
 //api/users
 router.get('/', verifyAuthToken, userController.getAllUsers);
 
-//api/users/id
-// router.get('/:id', userController.findUserById);
-
 //api/users/exists
 router.get('/exists', userController.findUserByEmail);
 

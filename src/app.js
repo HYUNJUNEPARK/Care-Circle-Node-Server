@@ -24,7 +24,7 @@ app.use(express.json());
 // API 라우트
 app.use('/api', routes);
 
-// 에러 핸들링
+// 에러 핸들링(마지막에 위치)
 app.use(notFoundHandler);
 app.use(errorHandler);
 
