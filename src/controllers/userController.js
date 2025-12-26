@@ -1,3 +1,4 @@
+const admin = require('../firebaseAdmin');
 const pool = require('../config/database');
 const ApiError = require("../errors/ApiError");
 const ERROR_CODES = require("../errors/errorCodes")
@@ -16,6 +17,7 @@ const getAllUsers = async (req, res, next) => {
       }
     );
   } catch (error) {
+    console.error(`getAllUsers`, error);
     next(error);
   }
 };
@@ -41,6 +43,7 @@ const getLoginUserInfo = async (req, res, next) => {
     );
 
   } catch (error) {
+    console.error(`getLoginUserInfo`, error);
     next(error);
   }
 }
@@ -79,9 +82,50 @@ const findUserByEmail = async (req, res, next) => {
       }
     );
   } catch (error) {
+    console.error(`findUserByEmail`, error);
     next(error);
   }
 };
+
+/**
+ * 계정 삭제(완전 삭제)
+ */
+const deleteUserByUid = async (req, res, next) => {
+  try {
+    const uid = req.firebaseUser.uid
+    if (!uid) {
+      throw new ApiError(ERROR_CODES.MISSING_REQUIRED_PARAM, "uid param");
+    }
+
+    // DB에서 사용자 유무 조회
+    const [users] = await pool.execute('SELECT * FROM users WHERE firebase_uid = ?', [uid]);
+    if (users.length === 0) {
+      //사용자가 없는 경우
+      throw new ApiError(ERROR_CODES.USER_NOT_FOUND, "not found user in DB");
+    }
+
+    const user = users[0];
+    //console.error(`testLog 111 ${user}`);
+    console.error(`testLog 222 ${uid}`);
+
+    // FB Auth 에서 삭제
+    await admin.auth().deleteUser(uid);
+
+    // DB 에서 삭제
+    await pool.execute('DELETE FROM users WHERE firebase_uid = ?', [uid]);
+
+    return res.json(
+      {
+        success: true,
+        data: "delete success"
+      }
+    );
+  } catch (error) {
+    console.error(`deleteUserByUid`, error);
+    next(error)
+  }
+}
+
 
 /**
  * 사용자 정보 동기화
@@ -112,8 +156,9 @@ const syncUser = async (req, res, next) => {
       }
     );
   } catch (error) {
+    console.error(`syncUser`, error);
     next(error);
   }
 }
 
-module.exports = { getAllUsers, getLoginUserInfo, findUserByEmail, syncUser };
+module.exports = { getAllUsers, getLoginUserInfo, findUserByEmail, syncUser, deleteUserByUid };

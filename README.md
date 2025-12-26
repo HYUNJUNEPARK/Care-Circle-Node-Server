@@ -36,3 +36,16 @@ CREATE TABLE users (
 );
 
 */
+
+===ERROR LIST===
+
+FirebaseAppError: Error while making request: self-signed certificate in certificate chain. Error code: SELF_SIGNED_CERT_IN_CHAIN
+-> 
+회사/사내/보안 네트워크 환경애서 Node.js 실행 환경이 신뢰하지 못하는 인증서가 네트워크 중간에 끼어 있음
+package.json 에 "dev": "nodemon app.js" -> "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 nodemon app.js" 
+```
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 nodemon app.js"
+  },
+```

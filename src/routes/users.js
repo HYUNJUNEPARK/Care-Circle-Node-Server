@@ -6,6 +6,9 @@ const verifyAuthToken = require("../middlewares/verifyAuthToken");
 //api/users
 router.get('/', userController.getAllUsers);
 
+//api/users
+router.delete('/', verifyAuthToken, userController.deleteUserByUid)
+
 //api/users/me
 router.get('/me', verifyAuthToken, userController.getLoginUserInfo);
 

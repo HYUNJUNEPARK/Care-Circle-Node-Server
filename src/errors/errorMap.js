@@ -5,6 +5,10 @@ const ERROR_MAP = {
         status: 500,
         message: "Internal Server Error",
     },
+    [ERROR_CODES.UNAUTHORIZED]: {
+        status: 401,
+        message: "Unauthorized",
+    },
     [ERROR_CODES.MISSING_REQUIRED_PARAM]: {
         status: 400,
         message: "Missing required parameter",
