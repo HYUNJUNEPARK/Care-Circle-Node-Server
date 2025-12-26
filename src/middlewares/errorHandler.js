@@ -1,3 +1,5 @@
+const ERROR_CODES = require("../errors/errorCodes");
+
 // 에러 핸들링 미들웨어
 const errorHandler = (err, req, res, next) => {
   // 서버용 로그
@@ -12,12 +14,13 @@ const errorHandler = (err, req, res, next) => {
   );
 
   const statusCode = err.statusCode || 500;
+  const code = err.code || ERROR_CODES.INTERNAL_ERROR;
 
   // 클라이언트 응답 포맷 통일
   res.status(statusCode).json(
     {
-      success: err.success,
-      code: err.code,
+      success: false,
+      code: code,
       message: err.message,
       detail: err.detail
     }

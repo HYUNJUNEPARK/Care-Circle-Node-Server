@@ -9,6 +9,10 @@ const ERROR_MAP = {
         status: 401,
         message: "Unauthorized",
     },
+    [ERROR_CODES.BAD_REQUEST]: {
+        status: 400,
+        message: "Bad request",
+    },
     [ERROR_CODES.MISSING_REQUIRED_PARAM]: {
         status: 400,
         message: "Missing required parameter",
